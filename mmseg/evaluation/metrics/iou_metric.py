@@ -76,6 +76,11 @@ class IoUMetric(BaseMetric):
         """
         num_classes = len(self.dataset_meta['classes'])
         for data_sample in data_samples:
+            print("iou_metri.py")
+            print("data_sample['pred_sem_seg']['data'].size")
+            print(data_sample['pred_sem_seg']['data'].size)
+            print("pred_label.size")
+            print(pred_label.size)
             pred_label = data_sample['pred_sem_seg']['data'].squeeze()
             # format_only always for test dataset without ground truth
             if not self.format_only:
@@ -181,10 +186,14 @@ class IoUMetric(BaseMetric):
             torch.Tensor: The prediction histogram on all classes.
             torch.Tensor: The ground truth histogram on all classes.
         """
-
+        print("num_classes ", num_classes)
+        print("ignore_idx ", ignore_index)
         mask = (label != ignore_index)
+        print("mask shape", mask.shape)
         pred_label = pred_label[mask]
+        print("pred_label.size ", pred_label.size)
         label = label[mask]
+        print("label.size ", label.size)
 
         intersect = pred_label[pred_label == label]
         area_intersect = torch.histc(
