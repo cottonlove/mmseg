@@ -189,9 +189,10 @@ class IoUMetric(BaseMetric):
         print("num_classes ", num_classes)
         print("ignore_idx ", ignore_index)
         mask = (label != ignore_index)
-        print("mask shape", mask.shape)
+        print("mask shape", mask.shape) #reshape시 크기임 (1024,1024) -> (224,224)
+        print("pred_label shape is ", pred_label.shape)
         pred_label = pred_label[mask]
-        print("pred_label.size ", pred_label.shape)
+        print("pred_label.size ", pred_label.shape) #IndexError: The shape of the mask [224, 224] at index 0 does not match the shape of the indexed tensor [1024, 1024] at index 0
         label = label[mask]
         print("label.size ", label.shape)
 
