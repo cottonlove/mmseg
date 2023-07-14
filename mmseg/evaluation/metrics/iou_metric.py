@@ -80,8 +80,8 @@ class IoUMetric(BaseMetric):
             print("data_sample['pred_sem_seg']['data'].size")
             print(data_sample['pred_sem_seg']['data'].size)
             print("pred_label.size")
-            print(pred_label.size)
             pred_label = data_sample['pred_sem_seg']['data'].squeeze()
+            print(pred_label.size)
             # format_only always for test dataset without ground truth
             if not self.format_only:
                 label = data_sample['gt_sem_seg']['data'].squeeze().to(
