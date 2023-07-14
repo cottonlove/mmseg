@@ -77,11 +77,11 @@ class IoUMetric(BaseMetric):
         num_classes = len(self.dataset_meta['classes'])
         for data_sample in data_samples:
             print("iou_metri.py")
-            print("data_sample['pred_sem_seg']['data'].size")
-            print(data_sample['pred_sem_seg']['data'].size)
-            print("pred_label.size")
+            print("data_sample['pred_sem_seg']['data'].shape")
+            print(data_sample['pred_sem_seg']['data'].shape)
+            print("pred_label.shape")
             pred_label = data_sample['pred_sem_seg']['data'].squeeze()
-            print(pred_label.size)
+            print(pred_label.shape)
             # format_only always for test dataset without ground truth
             if not self.format_only:
                 label = data_sample['gt_sem_seg']['data'].squeeze().to(
@@ -191,9 +191,9 @@ class IoUMetric(BaseMetric):
         mask = (label != ignore_index)
         print("mask shape", mask.shape)
         pred_label = pred_label[mask]
-        print("pred_label.size ", pred_label.size)
+        print("pred_label.size ", pred_label.shape)
         label = label[mask]
-        print("label.size ", label.size)
+        print("label.size ", label.shape)
 
         intersect = pred_label[pred_label == label]
         area_intersect = torch.histc(
