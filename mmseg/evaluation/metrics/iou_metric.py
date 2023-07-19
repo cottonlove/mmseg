@@ -78,23 +78,23 @@ class IoUMetric(BaseMetric):
         for data_sample in data_samples:
             print("iou_metri.py")
 
-            print("data_sample['pred_sem_seg']['data'].shape") #[1,1024,1024]
+            print("data_sample['pred_sem_seg']['data'].shape") #[1,1024,1024] -> [1,1024,1024]
             print(data_sample['pred_sem_seg']['data'].shape)
 
             print("pred_label.shape") 
             pred_label = data_sample['pred_sem_seg']['data'].squeeze() #channel 중 value=1인 것을 없앰
-            print(pred_label.shape) #[1024,1024]
+            print(pred_label.shape) #[1024,1024] -> [1024,1024]
 
             print("data_sample['gt_sem_seg']['data'].shape")
-            print(data_sample['gt_sem_seg']['data'].shape)
+            print(data_sample['gt_sem_seg']['data'].shape) # [1, 1024, 1024]-> [1, 224, 224]
 
             # format_only always for test dataset without ground truth
             if not self.format_only:
                 label = data_sample['gt_sem_seg']['data'].squeeze().to(
                     pred_label)
-                print("not self.format_only")
+                print("not self.format_only") #validation할 때 print함
                 print("label.shape")
-                print(label.shape)
+                print(label.shape) #[1024, 1024] -> [224, 224]
 
                 self.results.append(
                     self.intersect_and_union(pred_label, label, num_classes,
@@ -105,6 +105,7 @@ class IoUMetric(BaseMetric):
                     data_sample['img_path']))[0]
                 png_filename = osp.abspath(
                     osp.join(self.output_dir, f'{basename}.png'))
+                
                 output_mask = pred_label.cpu().numpy()
                 # The index range of official ADE20k dataset is from 0 to 150.
                 # But the index range of output is from 0 to 149.
@@ -196,25 +197,26 @@ class IoUMetric(BaseMetric):
             torch.Tensor: The prediction histogram on all classes.
             torch.Tensor: The ground truth histogram on all classes.
         """
-        print("num_classes ", num_classes)
-        print("ignore_idx ", ignore_index)
+        print("num_classes ", num_classes) #2
+        print("ignore_idx ", ignore_index) #255
 
         print("first pred_label shape")
-        print(pred_label.shape)
+        print(pred_label.shape) #[1024,1024] -> [1024,1024]
 
         print("first label shape")
-        print(label.shape)
+        print(label.shape) #[1024,1024] -> [224,224]
 
-        mask = (label != ignore_index)
+        mask = (label != ignore_index) #True, False로 이루어진 np.array
         print("mask shape", mask.shape) #reshape시 크기임 (1024,1024) -> (224,224)
         print("pred_label shape is ", pred_label.shape) #[1024,1024]
 
-        pred_label = pred_label[mask]
-        print("pred_label.size ", pred_label.shape) #1048576
-         #IndexError: The shape of the mask [224, 224] at index 0 does not match the shape of the indexed tensor [1024, 1024] at index 0
+        pred_label = pred_label[mask] #즉, ignore_index가 아닌 값들만 np.array로 근데 (N, )
+        print("pred_label.size ", pred_label.shape) #(1048576, )
+        # valiation일 때 왜 prediction label 사이즈가 바뀌지 않지...?
+        #IndexError: The shape of the mask [224, 224] at index 0 does not match the shape of the indexed tensor [1024, 1024] at index 0
         
-        label = label[mask]
-        print("label.size ", label.shape)  #1048576
+        label = label[mask] #즉, ignore_index가 아닌 값들만 np.array로 근데 (N, )
+        print("label.size ", label.shape)  #(1048576, )
 
         intersect = pred_label[pred_label == label]
         area_intersect = torch.histc(

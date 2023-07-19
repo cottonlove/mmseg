@@ -1,5 +1,5 @@
 CONFIG=$1
-GPUS=$2
+GPUS=$2 #2
 NNODES=${NNODES:-1}
 NODE_RANK=${NODE_RANK:-0}
 PORT=${PORT:-29500}
@@ -12,6 +12,6 @@ python -m torch.distributed.launch \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPUS \
     --master_port=$PORT \
-    $(dirname "$0")/train.py \
+    $(dirname "$0")/yj_main.py \
     $CONFIG \
     --launcher pytorch ${@:3}
